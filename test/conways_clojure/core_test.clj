@@ -5,11 +5,11 @@
 (deftest test-dimensions
   (testing "Board does not have proper dimensions"
     (let [board (initial-board (vector))]
-      (is (= (count board) 10)))))
+      (is (= (count board) side-length)))))
 
 (deftest test-live-evolution
   (let [board (initial-board #{[3 3] [2 2] [3 2] [0 0] [1 0]})]
-    (let [v2 (evolve board)]
+    (let [v2 (evolve-state board)]
       (testing "Live cell died when it should not have"
         (is (= (get-cell v2 3 3) true))
         (is (= (get-cell v2 2 2) true))
