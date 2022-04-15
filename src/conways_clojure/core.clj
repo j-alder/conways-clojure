@@ -4,13 +4,13 @@
   (:require [quil.middleware :as m]))
 
 ;; length of each side of state
-(def side-length 40)
+(def side-length 100)
 
 ;; vector of random t/f values
 (defn random-row []
-  (vec (repeatedly side-length #(= (rand-int 2) 0))))
+  (vec (repeatedly side-length #(= (rand-int 3) 0))))
 
-;; initial (randomized) state
+;; initial (randomized) state - 2 dimensional vector
 (def state
   (vec (repeatedly side-length random-row)))
 
@@ -29,20 +29,20 @@
       (or (= live-neighbors 3)))))
 
 ;; get the value of a cell at a given coordinate in a board
-(defn get-cell [board i j]
-  (nth (nth board i []) j false))
+(defn get-cell [board x y]
+  (nth (nth board x []) y false))
 
 ;; get all neighbors of a cell at coordinates i, j
-(defn get-neighbors [board i j]
+(defn get-neighbors [board x y]
   (vector
-    (get-cell board (- i 1) (- j 1))
-    (get-cell board (- i 1) j)
-    (get-cell board (- i 1) (+ j 1))
-    (get-cell board i (- j 1))
-    (get-cell board i (+ j 1))
-    (get-cell board (+ i 1) (- j 1))
-    (get-cell board (+ i 1) j)
-    (get-cell board (+ i 1) (+ j 1))))
+    (get-cell board (- x 1) (- y 1))
+    (get-cell board (- x 1) y)
+    (get-cell board (- x 1) (+ y 1))
+    (get-cell board x (- y 1))
+    (get-cell board x (+ y 1))
+    (get-cell board (+ x 1) (- y 1))
+    (get-cell board (+ x 1) y)
+    (get-cell board (+ x 1) (+ y 1))))
 
 ;; cycle one evolution of the board, calculating liveliness of each cell
 (defn evolve-state [state]
@@ -50,32 +50,32 @@
          (vec (for [j (range (count (nth state i)))]
                 (evolve-cell (get-cell state i j) (get-neighbors state i j)))))))
 
-(defn multiplier [idx]
-  (int (/ idx side-length)))
+(defn offset [idx]
+  (if (= idx side-length) side-length 0))
 
-(defn coordinate [cell-size idx]
-  (* cell-size (- idx (* (multiplier idx) side-length))))
+(defn pos [cell-size idx]
+  (* cell-size (- idx (offset idx))))
 
 ;; draw the initial state
 (defn draw-state [state]
   (q/background 240)
-  (let [c-size (/ (q/width) side-length)]
+  (let [cell-size (/ (q/width) side-length)]
     (doseq [[row-idx row] (map-indexed vector state)]
-      (let [x (coordinate c-size row-idx)]
+      (let [x (pos cell-size row-idx)]
         (doseq [[col-idx cell] (map-indexed vector row)]
-          (let [y (coordinate c-size col-idx)]
-            (q/fill (if cell 0 255))
-            (q/rect x y c-size c-size)))))))
+          (let [y (pos cell-size col-idx)]
+            (if cell (q/fill 253 246 227) (q/fill 0 43 54))
+            (q/rect x y cell-size cell-size)))))))
 
 (defn setup []
   (q/frame-rate 10)
-  (q/color-mode :hsb)
   (q/no-stroke)
   state)
 
 (q/defsketch conways-clojure.core
              :host "host"
-             :size [500 500]
+             :title "Conway's Clojure"
+             :size [800 800]
              :setup setup
              :update evolve-state
              :draw draw-state
