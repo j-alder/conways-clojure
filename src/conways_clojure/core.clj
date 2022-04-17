@@ -6,14 +6,15 @@
 ;; length of each side of state
 (def side-length 100)
 
-;; vector of random t/f values
+;; vector of 1 and 0 - assigned randomly
 (defn random-row []
   (vec (repeatedly side-length #(rand-int 2))))
 
-;; initial (randomized) state - 2 dimensional vector
+;; initial (randomized) state - 2 dimensional square vector
 (def state
   (vec (repeatedly side-length random-row)))
 
+;; 1 is alive, 0 is dead
 (defn is-alive [x] (= x 1))
 
 ;; get number of live cells in a collection
@@ -57,18 +58,17 @@
 (defn offset [idx]
   (if (= idx side-length) side-length 0))
 
-;; vert/horiz coordinate for a cell in the canvas
-;; based on cell size and current state index
+;; vertical or horizontal position of a cell based on cell size and index
 (defn pos [cell-size idx]
   (* cell-size (- idx (offset idx))))
 
-;; fill a space with a color on the Quil canvas
+;; fill a space with a color on the canvas based on cell liveliness
 (defn fill [cell]
   (if (= cell 1)
     (q/fill 253 246 227)
     (q/fill 0 43 54)))
 
-;; construct a rectangle on the Quil canvas
+;; construct a rectangle on the canvas
 (defn make-rect [x y s]
   (q/rect x y s s))
 
