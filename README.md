@@ -1,7 +1,18 @@
 # Conway's Clojure
 
-Conway's Life written in Clojure, using [Quil](https://github.com/quil/quil) for graphics.
+Conway's Game of Life written in Clojure, using [Quil](https://github.com/quil/quil) for graphics.
 
-Running `core.main` opens a square window in which runs Conway's Life!
+## Starting a game
 
-Framerate can be controlled in `core.setup`, number of cells by updating `core.side-length`.
+Run `core.main` to start a new game of random initial state.
+
+## Configuration
+
+### Framerate
+Adjust `q/frame-rate` in `core.setup`
+
+### Number of cells
+Set with `core.side-length`. This number squared is the total amount of cells.
+
+### Color
+The color of live and dead cells is configured in `core.fill` using rgb codes.
